@@ -1,4 +1,4 @@
-const definePostsCategoriesModel = (sequelize, DataTypes) => {
+const definePostsCategoriesModel = (sequelize) => {
   const PostsCategories = sequelize.define('PostsCategories', {}, { timestamps: false });
 
   PostsCategories.associate = (models) => {
