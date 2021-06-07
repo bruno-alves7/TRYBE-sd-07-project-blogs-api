@@ -93,18 +93,18 @@ const getByPk = async (id) => {
     }
 };
 
-const remove = async (id) => {
-    try {
-        const user = await BlogPost.destroy({ where: { id } });
-        return user;
-    } catch (error) {
-        throw new Error(error);
-    }
-};
+// const remove = async (id) => {
+//     try {
+//         const user = await BlogPost.destroy({ where: { id } });
+//         return user;
+//     } catch (error) {
+//         throw new Error(error);
+//     }
+// };
 
 module.exports = {
   createBlogPost,
   getAll,
   getByPk,
-  remove,
+  // remove,
 };
