@@ -12,7 +12,7 @@ const validateToken = async (request, response, next) => {
   }
   try {
     const decoded = jwt.verify(token, newSecret);
-    const user = await await User.findOne({ where: { email: decoded.email } });
+    const user = await User.findOne({ where: { email: decoded.email } });
 
     if (!user) {
       const ERROR = 401;
