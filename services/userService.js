@@ -1,5 +1,7 @@
+const jwt = require('jsonwebtoken');
 const { User } = require('../models');
 const { genToken } = require('./genToken');
+require('dotenv/config');
 
 const validateName = (displayName) => {
   if (!displayName || displayName.length < 8) {
@@ -75,7 +77,15 @@ const getByPk = async (id) => {
     }
 };
 
-const remove = async (id) => {
+const decoded = async (token) => {
+  const newSecret = process.env.JWT_SECRET;
+  const result = jwt.verify(token, newSecret);
+  const { id: userId } = await User.findOne({ where: { email: result.email } });
+  return userId;
+};
+
+const remove = async (token) => {
+  const id = await decoded(token);
     try {
         const user = await User.destroy({ where: { id } });
         return user;

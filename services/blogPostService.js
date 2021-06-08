@@ -93,18 +93,65 @@ const getByPk = async (id) => {
     }
 };
 
-// const remove = async (id) => {
-//     try {
-//         const user = await BlogPost.destroy({ where: { id } });
-//         return user;
-//     } catch (error) {
-//         throw new Error(error);
-//     }
-// };
+const validateCategoryIdNull = (categoryId) => {
+  if (categoryId) {
+    const ERR = 'Categories cannot be edited';
+  throw new Error(ERR);
+}
+return categoryId;
+};
+
+const validateId = async (token, id) => {
+  const idUserToken = await decoded(token);
+  const post = await BlogPost.findByPk(id);
+  if (idUserToken !== post.userId) {
+    const ERR = 'Unauthorized user';
+    throw new Error(ERR);
+  }
+  return 'Unauthorized user';
+};
+
+const update = async ({ id, title, content, categoryIds, token }) => {
+  validateCategoryIdNull(categoryIds);
+  validateTitle(title);
+  validateContent(content);
+  await validateId(token, id);
+  try {
+      await BlogPost.update({ title, content }, { where: { id } });
+      const result = await BlogPost.findByPk(id, { attributes: 
+        { exclude: ['id', 'published', 'updated'] },
+        include: [
+            { model: Categorie, as: 'categories', through: { attributes: [] } }],
+    }); 
+      return result;
+  } catch (error) {
+      throw new Error(error);
+  }
+};
+
+const postExists = async (id) => {
+  const result = await BlogPost.findByPk(id);
+  if (!result) {
+    const ERR = 'Post does not exist';
+    throw new Error(ERR);
+  }
+};
+
+const remove = async (id, token) => {
+  await postExists(id);
+  await validateId(token, id);
+  try {
+      const post = await BlogPost.destroy({ where: { id } });
+      return post;
+  } catch (error) {
+      throw new Error(error);
+  }
+};
 
 module.exports = {
   createBlogPost,
   getAll,
   getByPk,
-  // remove,
+  remove,
+  update,
 };

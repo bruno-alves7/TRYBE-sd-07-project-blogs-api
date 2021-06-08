@@ -2,6 +2,7 @@ const userService = require('../services/userService');
 
 const OK = 200;
 const CREATE = 201;
+const DELETE = 204;
 const ERROR = 400;
 const NOT_F = 404;
 const CONFLICT = 409;
@@ -47,9 +48,9 @@ const getByPk = async (request, response) => {
 
 const remove = async (request, response) => {
     try {
-        const { id } = request.params;
-        await userService.remove(id);
-        return response.status(OK).json();
+      const token = request.headers.authorization;
+        await userService.remove(token);
+        return response.status(DELETE).json();
     } catch (error) {
         response.status(ERROR).json({ message: error.message });
     }
